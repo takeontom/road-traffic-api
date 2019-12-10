@@ -1,8 +1,10 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 
 db = SQLAlchemy()
+ma = Marshmallow()
 
 
 def create_app():
@@ -12,6 +14,8 @@ def create_app():
     ] = "postgresql://roadtrafficapi:roadtrafficapi@localhost:5444/roadtrafficapi"
 
     db.init_app(app)
+    ma.init_app(app)
+
     Migrate(app, db)
 
     import roadtrafficapi.models
