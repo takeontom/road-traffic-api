@@ -14,4 +14,6 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)
 
+    import roadtrafficapi.models
+
     return app
