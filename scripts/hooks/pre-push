@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ -f "Makefile" ]; then
+    make pre-push
+else
+    echo "Skipping pre-push hook as no Makefile"
+fi
