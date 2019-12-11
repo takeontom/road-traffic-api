@@ -1,9 +1,12 @@
 from flask import Flask
+from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
 
 db = SQLAlchemy()
+
+# Use Marshmallow for [de]serialisation. Works nicely with SQLAlchemy models
+# and handles a bit of complexity for us.
 ma = Marshmallow()
 
 
@@ -16,8 +19,10 @@ def create_app():
     db.init_app(app)
     ma.init_app(app)
 
+    # Enable alembic migration functionality
     Migrate(app, db)
 
+    # Import models so alembic can pick them up for migrations
     import roadtrafficapi.models
 
     return app
