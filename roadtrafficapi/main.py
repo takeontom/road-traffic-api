@@ -67,6 +67,9 @@ def generate_response(data, pagination):
 @use_kwargs({"road_name": fields.String(location="query", required=False)})
 @use_kwargs({"road_type": fields.String(location="query", required=False)})
 @use_kwargs(
+    {"direction_of_travel": fields.String(location="query", required=False)}
+)
+@use_kwargs(
     {"estimation_method": fields.String(location="query", required=False)}
 )
 @use_kwargs(
