@@ -1,5 +1,5 @@
 import click
-from flask import Flask
+from flask import Flask, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
@@ -27,5 +27,19 @@ def aadf_by_direction_list():
     """
     Display all AADF By Direction records.
     """
-    all_aadf_by_directions = AADFByDirection.query.all()
-    return {"data": list_aadf_by_direction_schema.dump(all_aadf_by_directions)}
+    page = request.args.get("page", 1, type=int)
+    per_page = 1000
+
+    pagination = AADFByDirection.query.paginate(page, per_page, False)
+
+    all_aadf_by_directions = pagination.items
+
+    return {
+        "data": list_aadf_by_direction_schema.dump(all_aadf_by_directions),
+        "meta": {
+            "page": page,
+            "per_page": per_page,
+            "pages": pagination.pages,
+            "total": pagination.total,
+        },
+    }
