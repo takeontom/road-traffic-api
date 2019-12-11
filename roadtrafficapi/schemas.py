@@ -4,6 +4,7 @@ from geoalchemy2.elements import WKTElement
 from geoalchemy2.types import Geometry as GeometryType
 from marshmallow import Schema, fields, post_dump, pre_dump, pre_load
 from marshmallow_sqlalchemy.convert import ModelConverter as BaseModelConverter
+from shapely import wkb
 
 from . import ma
 from .models import AADFByDirection
@@ -24,7 +25,8 @@ class AADFByDirectionSchema(ma.ModelSchema):
     @post_dump
     def point_to_string(self, in_data, **kwargs):
         if in_data["point"] is not None:
-            in_data["point"] = str(in_data["point"])
+            p = wkb.loads(str(in_data["point"]), hex=True)
+            in_data["point"] = str(p)
         return in_data
 
     @post_dump
