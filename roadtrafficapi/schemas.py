@@ -60,3 +60,12 @@ class YearSchema(Schema):
 
 year_schema = YearSchema()
 list_year_schema = YearSchema(many=True)
+
+
+class RegionSchema(Schema):
+    region_id = fields.Int()
+    region_name = fields.String()
+
+
+region_schema = RegionSchema
+list_region_schema = RegionSchema(many=True)

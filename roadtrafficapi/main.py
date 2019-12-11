@@ -8,7 +8,11 @@ from webargs import fields
 from . import create_app
 from .importers import import_aadf_by_direction
 from .models import AADFByDirection
-from .schemas import list_aadf_by_direction_schema, list_year_schema
+from .schemas import (
+    list_aadf_by_direction_schema,
+    list_region_schema,
+    list_year_schema,
+)
 
 app = create_app()
 
@@ -67,7 +71,7 @@ def aadf_by_direction_list(**kwargs):
     return generate_response(data, pagination)
 
 
-@app.route("/api/by-direction/years/", methods=["GET"])
+@app.route("/api/by-direction/year/", methods=["GET"])
 @use_kwargs({"page": fields.Int(location="query", required=False, missing=1)})
 def year_list(**kwargs):
     """
@@ -87,6 +91,29 @@ def year_list(**kwargs):
     return generate_response(all_years, pagination)
 
 
+@app.route("/api/by-direction/region/", methods=["GET"])
+@use_kwargs({"page": fields.Int(location="query", required=False, missing=1)})
+def region_list(**kwargs):
+    """
+    List all regions with AADF By Direction records.
+    """
+    page = kwargs["page"]
+    per_page = 1000
+
+    pagination = (
+        AADFByDirection.query.with_entities(
+            AADFByDirection.region_id, AADFByDirection.region_name
+        )
+        .group_by(AADFByDirection.region_id, AADFByDirection.region_name)
+        .order_by(AADFByDirection.region_id)
+        .paginate(page, per_page, False)
+    )
+    all_regions = list_region_schema.dump(pagination.items)
+
+    return generate_response(all_regions, pagination)
+
+
 docs = FlaskApiSpec(app)
 docs.register(aadf_by_direction_list)
 docs.register(year_list)
+docs.register(region_list)
