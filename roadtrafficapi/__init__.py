@@ -1,3 +1,5 @@
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import Flask
 from flask_compress import Compress
 from flask_marshmallow import Marshmallow
@@ -16,9 +18,19 @@ compress = Compress()
 
 def create_app():
     app = Flask(__name__)
-    app.config[
-        "SQLALCHEMY_DATABASE_URI"
-    ] = "postgresql://roadtrafficapi:roadtrafficapi@localhost:5444/roadtrafficapi"
+    app.config.update(
+        {
+            "SQLALCHEMY_DATABASE_URI": "postgresql://roadtrafficapi:roadtrafficapi@localhost:5444/roadtrafficapi",
+            "APISPEC_SPEC": APISpec(
+                title="Road Traffic API",
+                version="1",
+                openapi_version="2.0",
+                plugins=[MarshmallowPlugin()],
+            ),
+            "APISPEC_SWAGGER_URL": "/api/json/",
+            "APISPEC_SWAGGER_UI_URL": "/api/",
+        }
+    )
 
     db.init_app(app)
     ma.init_app(app)

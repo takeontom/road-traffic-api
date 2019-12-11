@@ -1,7 +1,9 @@
 import click
 from flask import Flask, request
+from flask_apispec import FlaskApiSpec, doc, marshal_with, use_kwargs
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from webargs import fields
 
 from . import create_app
 from .importers import import_aadf_by_direction
@@ -23,11 +25,13 @@ def cmd_import_aadf_by_direction(local_authority_id):
 
 
 @app.route("/api/by-direction/", methods=["GET"])
-def aadf_by_direction_list():
+@use_kwargs({"page": fields.Int(location="query", required=False, missing=1)})
+@doc(description="Wibble")
+def aadf_by_direction_list(**kwargs):
     """
     Display all AADF By Direction records.
     """
-    page = request.args.get("page", 1, type=int)
+    page = kwargs["page"]
     per_page = 1000
 
     pagination = AADFByDirection.query.paginate(page, per_page, False)
@@ -43,3 +47,7 @@ def aadf_by_direction_list():
             "total": pagination.total,
         },
     }
+
+
+docs = FlaskApiSpec(app)
+docs.register(aadf_by_direction_list)
