@@ -58,14 +58,22 @@ def generate_response(data, pagination):
 
 @app.route("/api/by-direction/", methods=["GET"])
 @use_kwargs({"page": fields.Int(location="query", required=False, missing=1)})
-def aadf_by_direction_list(**kwargs):
+@use_kwargs({"year": fields.String(location="query", required=False)})
+@use_kwargs(
+    {"local_authority_id": fields.Int(location="query", required=False)}
+)
+@use_kwargs({"region_id": fields.Int(location="query", required=False)})
+@use_kwargs({"road_name": fields.String(location="query", required=False)})
+@use_kwargs({"road_type": fields.String(location="query", required=False)})
+def aadf_by_direction_list(page, **kwargs):
     """
     List all AADF By Direction records.
     """
-    page = kwargs["page"]
     per_page = 1000
 
-    pagination = AADFByDirection.query.paginate(page, per_page, False)
+    pagination = AADFByDirection.query.filter_by(**kwargs).paginate(
+        page, per_page, False
+    )
 
     all_aadf_by_directions = pagination.items
 
