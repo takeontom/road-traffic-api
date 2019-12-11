@@ -1,14 +1,31 @@
 from decimal import Decimal
 
+from geoalchemy2.elements import WKTElement
+from geoalchemy2.types import Geometry as GeometryType
 from marshmallow import Schema, fields, post_dump, pre_dump, pre_load
+from marshmallow_sqlalchemy.convert import ModelConverter as BaseModelConverter
 
 from . import ma
 from .models import AADFByDirection
 
 
+class ModelConverter(BaseModelConverter):
+    SQLA_TYPE_MAPPING = {
+        **BaseModelConverter.SQLA_TYPE_MAPPING,
+        **{GeometryType: fields.Field},
+    }
+
+
 class AADFByDirectionSchema(ma.ModelSchema):
     class Meta:
         model = AADFByDirection
+        model_converter = ModelConverter
+
+    @post_dump
+    def point_to_string(self, in_data, **kwargs):
+        if in_data["point"] is not None:
+            in_data["point"] = str(in_data["point"])
+        return in_data
 
     @post_dump
     def decimal_link_lengths_to_float(self, in_data, **kwargs):
@@ -47,6 +64,14 @@ class AADFByDirectionSchema(ma.ModelSchema):
         else:
             in_data["link_length_km"] = Decimal(in_data["link_length_km"])
 
+        return in_data
+
+    @pre_load
+    def create_point(self, in_data, **kwargs):
+        if in_data["longitude"] and in_data["latitude"]:
+            in_data[
+                "point"
+            ] = f'SRID=4326;POINT({in_data["longitude"]} {in_data["latitude"]})'
         return in_data
 
 

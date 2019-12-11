@@ -1,3 +1,5 @@
+from geoalchemy2 import Geometry
+
 from . import db
 
 
@@ -37,6 +39,7 @@ class AADFByDirection(db.Model):
     northing = db.Column(db.Integer, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
+    point = db.Column(Geometry(geometry_type="POINT", srid=4326))
 
     # Numeric (i.e. Decimal) fields slightly complicate things during
     # [de]serialisation in Marshmallow. See warning in docs for more info:

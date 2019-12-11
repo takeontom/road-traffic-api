@@ -64,6 +64,7 @@ def load_aadf_by_direction_data(data, session):
         # (`marshmallow.exceptions.ValidationError`). Deliberately not handling
         # them here and allowing them to bubble.
         aadf_by_direction = aadf_by_direction_schema.load(row)
+        print(aadf_by_direction.point)
         aadf_by_directions.append(aadf_by_direction)
 
     session.bulk_save_objects(aadf_by_directions)
