@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from marshmallow import post_dump, pre_dump, pre_load
+from marshmallow import Schema, fields, post_dump, pre_dump, pre_load
 
 from . import ma
 from .models import AADFByDirection
@@ -52,3 +52,11 @@ class AADFByDirectionSchema(ma.ModelSchema):
 
 aadf_by_direction_schema = AADFByDirectionSchema()
 list_aadf_by_direction_schema = AADFByDirectionSchema(many=True)
+
+
+class YearSchema(Schema):
+    year = fields.String()
+
+
+year_schema = YearSchema()
+list_year_schema = YearSchema(many=True)
