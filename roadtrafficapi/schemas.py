@@ -69,3 +69,16 @@ class RegionSchema(Schema):
 
 region_schema = RegionSchema
 list_region_schema = RegionSchema(many=True)
+
+
+class LocalAuthoritySchema(Schema):
+    local_authority_id = fields.Int()
+    local_authority_name = fields.String()
+
+    # Presuming a local authority is only ever in a single region
+    region_id = fields.Int()
+    region_name = fields.String()
+
+
+local_authority_schema = LocalAuthoritySchema
+list_local_authority_schema = LocalAuthoritySchema(many=True)

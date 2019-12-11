@@ -10,6 +10,7 @@ from .importers import import_aadf_by_direction
 from .models import AADFByDirection
 from .schemas import (
     list_aadf_by_direction_schema,
+    list_local_authority_schema,
     list_region_schema,
     list_year_schema,
 )
@@ -113,7 +114,38 @@ def region_list(**kwargs):
     return generate_response(all_regions, pagination)
 
 
+@app.route("/api/by-direction/local-authority/", methods=["GET"])
+@use_kwargs({"page": fields.Int(location="query", required=False, missing=1)})
+def local_authority_list(**kwargs):
+    """
+    List all regions with AADF By Direction records.
+    """
+    page = kwargs["page"]
+    per_page = 1000
+
+    pagination = (
+        AADFByDirection.query.with_entities(
+            AADFByDirection.region_id,
+            AADFByDirection.region_name,
+            AADFByDirection.local_authority_id,
+            AADFByDirection.local_authority_name,
+        )
+        .group_by(
+            AADFByDirection.local_authority_id,
+            AADFByDirection.local_authority_name,
+            AADFByDirection.region_id,
+            AADFByDirection.region_name,
+        )
+        .order_by(AADFByDirection.local_authority_id)
+        .paginate(page, per_page, False)
+    )
+    all_regions = list_local_authority_schema.dump(pagination.items)
+
+    return generate_response(all_regions, pagination)
+
+
 docs = FlaskApiSpec(app)
 docs.register(aadf_by_direction_list)
 docs.register(year_list)
 docs.register(region_list)
+docs.register(local_authority_list)
