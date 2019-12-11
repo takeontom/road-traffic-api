@@ -10,6 +10,7 @@ from .importers import import_aadf_by_direction
 from .models import AADFByDirection
 from .schemas import (
     list_aadf_by_direction_schema,
+    list_estimation_method_schema,
     list_local_authority_schema,
     list_region_schema,
     list_road_schema,
@@ -65,6 +66,16 @@ def generate_response(data, pagination):
 @use_kwargs({"region_id": fields.Int(location="query", required=False)})
 @use_kwargs({"road_name": fields.String(location="query", required=False)})
 @use_kwargs({"road_type": fields.String(location="query", required=False)})
+@use_kwargs(
+    {"estimation_method": fields.String(location="query", required=False)}
+)
+@use_kwargs(
+    {
+        "estimation_method_detailed": fields.String(
+            location="query", required=False
+        )
+    }
+)
 def aadf_by_direction_list(page, **kwargs):
     """
     List all AADF By Direction records.
@@ -201,6 +212,34 @@ def road_type_list(**kwargs):
     return generate_response(all_road_types, pagination)
 
 
+@app.route("/api/by-direction/estimation-method/", methods=["GET"])
+@use_kwargs({"page": fields.Int(location="query", required=False, missing=1)})
+def estimation_method_list(**kwargs):
+    """
+    List all estimation methods in AADF By Direction records.
+    """
+    page = kwargs["page"]
+    per_page = 1000
+
+    pagination = (
+        AADFByDirection.query.with_entities(
+            AADFByDirection.estimation_method,
+            AADFByDirection.estimation_method_detailed,
+        )
+        .group_by(
+            AADFByDirection.estimation_method,
+            AADFByDirection.estimation_method_detailed,
+        )
+        .order_by(AADFByDirection.estimation_method)
+        .paginate(page, per_page, False)
+    )
+    all_estimation_methods = list_estimation_method_schema.dump(
+        pagination.items
+    )
+
+    return generate_response(all_estimation_methods, pagination)
+
+
 docs = FlaskApiSpec(app)
 docs.register(aadf_by_direction_list)
 docs.register(year_list)
@@ -208,3 +247,4 @@ docs.register(region_list)
 docs.register(local_authority_list)
 docs.register(road_list)
 docs.register(road_type_list)
+docs.register(estimation_method_list)

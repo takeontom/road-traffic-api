@@ -102,3 +102,12 @@ class RoadTypeSchema(Schema):
 
 road_type_schema = RoadTypeSchema
 list_road_type_schema = RoadTypeSchema(many=True)
+
+
+class EstimationMethodSchema(Schema):
+    estimation_method = fields.String()
+    estimation_method_detailed = fields.String()
+
+
+estimation_method_schema = EstimationMethodSchema
+list_estimation_method_schema = EstimationMethodSchema(many=True)
