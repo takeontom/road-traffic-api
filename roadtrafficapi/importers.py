@@ -22,7 +22,7 @@ def import_aadf_by_direction(local_authority_id):
 
     # Deliberately allowing any exceptions to crash process. Database actions
     # all occur in transations, so there's no chance of data loss in case of
-    # error; and the exceptions messages will explain issues perfectly fine.
+    # error; and the exception messages will explain issues perfectly fine.
 
     data = get_aadf_by_direction_data(local_authority_id)
 

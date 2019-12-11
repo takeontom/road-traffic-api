@@ -82,3 +82,23 @@ class LocalAuthoritySchema(Schema):
 
 local_authority_schema = LocalAuthoritySchema
 list_local_authority_schema = LocalAuthoritySchema(many=True)
+
+
+class RoadSchema(Schema):
+    # Roads can span multiple regions and local authorities. Also road names
+    # are not unique (e.g. there's A roads in Exeter with the same name as
+    # roads in Plymouth), so all we can spit out per road is name and type.
+    road_name = fields.String()
+    road_type = fields.String()
+
+
+road_schema = RoadSchema
+list_road_schema = RoadSchema(many=True)
+
+
+class RoadTypeSchema(Schema):
+    road_type = fields.String()
+
+
+road_type_schema = RoadTypeSchema
+list_road_type_schema = RoadTypeSchema(many=True)
