@@ -4,6 +4,18 @@ from . import db
 
 
 class Ward(db.Model):
+    """
+    Represents a single UK ward, as defined by gov.uk's dataset.
+
+    Source data is from: https://data.gov.uk/dataset/dde6c09f-06d1-4bbe-a328-d1ef2b52e167/wards-december-2016-full-clipped-boundaries-in-great-britain
+
+    Table structure defined by the `shp2pgsql` tool, which converts a .shp
+    file into SQL CREATE TABLE and INSERT statements.
+
+    Model is not managed by alembic so does not have migrations. Instead create
+    table using the `shp2pgsql` tool as per: https://gis.stackexchange.com/questions/41799/adding-shapefiles-to-postgis-database
+    """
+
     __tablename__ = "wards"
 
     gid = db.Column(db.Integer, primary_key=True)
