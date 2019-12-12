@@ -301,3 +301,5 @@ docs.register(local_authority_list)
 docs.register(road_list)
 docs.register(road_type_list)
 docs.register(estimation_method_list)
+
+docs.register(ward_list)

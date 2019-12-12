@@ -40,12 +40,10 @@ class AADFByDirectionSchema(ma.ModelSchema):
         #   * Use the "as_string" flag on the field to serialise as string
         #     rather than Decimal and let client deal with str to decimal
         #     conversion.
-
-        if in_data["link_length_km"] is not None:
-            in_data["link_length_km"] = float(in_data["link_length_km"])
-
-        if in_data["link_length_miles"] is not None:
-            in_data["link_length_miles"] = float(in_data["link_length_miles"])
+        decimal_fields = ["link_length_km", "link_length_miles"]
+        for field in decimal_fields:
+            if in_data[field] is not None:
+                in_data[field] = float(in_data[field])
 
         return in_data
 
@@ -53,18 +51,12 @@ class AADFByDirectionSchema(ma.ModelSchema):
     def decimal_link_lengths(self, in_data, **kwargs):
         # Decimal fields don't convert empty strings to a valid number or None.
         # So check for empty string and ensure None is being used.
-
-        if in_data["link_length_miles"] == "":
-            in_data["link_length_miles"] = None
-        else:
-            in_data["link_length_miles"] = Decimal(
-                in_data["link_length_miles"]
-            )
-
-        if in_data["link_length_km"] == "":
-            in_data["link_length_km"] = None
-        else:
-            in_data["link_length_km"] = Decimal(in_data["link_length_km"])
+        decimal_fields = ["link_length_km", "link_length_miles"]
+        for field in decimal_fields:
+            if in_data[field] == "":
+                in_data[field] = None
+            else:
+                in_data[field] = Decimal(in_data[field])
 
         return in_data
 
