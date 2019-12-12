@@ -36,7 +36,7 @@ target_metadata = current_app.extensions["migrate"].db.metadata
 
 def include_object(object, name, type_, reflected, compare_to):
     # Some tables we don't want to be managed by alembic
-    if type_ == "table" and name in ["spatial_ref_sys"]:
+    if type_ == "table" and name in ["spatial_ref_sys", "wards"]:
         return False
 
     return True

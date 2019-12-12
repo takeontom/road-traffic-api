@@ -7,7 +7,7 @@ from marshmallow_sqlalchemy.convert import ModelConverter as BaseModelConverter
 from shapely import wkb
 
 from . import ma
-from .models import AADFByDirection
+from .models import AADFByDirection, Ward
 
 
 class ModelConverter(BaseModelConverter):
@@ -138,3 +138,38 @@ class EstimationMethodSchema(Schema):
 
 estimation_method_schema = EstimationMethodSchema
 list_estimation_method_schema = EstimationMethodSchema(many=True)
+
+
+class WardSchema(ma.ModelSchema):
+    class Meta:
+        model = Ward
+        model_converter = ModelConverter
+
+    @post_dump
+    def geom_to_string(self, in_data, **kwargs):
+        if in_data["geom"] is not None:
+            p = wkb.loads(str(in_data["geom"]), hex=True)
+            in_data["geom"] = str(p)
+        return in_data
+
+    @post_dump
+    def decimal_link_lengths_to_float(self, in_data, **kwargs):
+        # Decimal fields are not serialisable as JSON, so convert them to float
+        # first. Is a known limitation of Marshmallow:
+        # https://marshmallow.readthedocs.io/en/latest/api_reference.html?highlight=function#marshmallow.fields.Decimal
+        #
+        # Other alternatives:
+        #   * Use simplejson to convert dict to json in routes.
+        #   * Use the "as_string" flag on the field to serialise as string
+        #     rather than Decimal and let client deal with str to decimal
+        #     conversion.
+        decimal_fields = ["long", "lat", "st_areasha", "st_lengths"]
+        for field in decimal_fields:
+            if in_data[field] is not None:
+                in_data[field] = float(in_data[field])
+
+        return in_data
+
+
+ward_schema = WardSchema
+list_ward_schema = WardSchema(many=True)

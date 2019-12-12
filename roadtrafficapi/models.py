@@ -3,6 +3,25 @@ from geoalchemy2 import Geometry
 from . import db
 
 
+class Ward(db.Model):
+    __tablename__ = "wards"
+
+    gid = db.Column(db.Integer, primary_key=True)
+    objectid = db.Column(db.BigInteger)
+    wd16cd = db.Column(db.String(length=80))
+    wd16nm = db.Column(db.String(length=80))
+    wd16nmw = db.Column(db.String(length=80))
+    lad16cd = db.Column(db.String(length=80))
+    lad16nm = db.Column(db.String(length=80))
+    bng_e = db.Column(db.BigInteger)
+    bng_n = db.Column(db.BigInteger)
+    long = db.Column(db.Numeric)
+    lat = db.Column(db.Numeric)
+    st_areasha = db.Column(db.Numeric)
+    st_lengths = db.Column(db.Numeric)
+    geom = db.Column(Geometry(geometry_type="MULTIPOLYGON", srid=4326))
+
+
 class AADFByDirection(db.Model):
     """
     Represents a single row of the AADF By Direction data set.

@@ -7,7 +7,7 @@ from webargs import fields
 
 from . import create_app
 from .importers import import_aadf_by_direction
-from .models import AADFByDirection
+from .models import AADFByDirection, Ward
 from .schemas import (
     list_aadf_by_direction_schema,
     list_estimation_method_schema,
@@ -15,6 +15,7 @@ from .schemas import (
     list_region_schema,
     list_road_schema,
     list_road_type_schema,
+    list_ward_schema,
     list_year_schema,
 )
 
@@ -275,6 +276,21 @@ def estimation_method_list(**kwargs):
     )
 
     return generate_response(all_estimation_methods, pagination)
+
+
+@app.route("/api/ward/", methods=["GET"])
+@use_kwargs({"page": fields.Int(location="query", required=False, missing=1)})
+def ward_list(**kwargs):
+    """
+    List all wards.
+    """
+    page = kwargs["page"]
+    per_page = 100
+
+    pagination = Ward.query.order_by(Ward.gid).paginate(page, per_page, False)
+    all_wards = list_ward_schema.dump(pagination.items)
+
+    return generate_response(all_wards, pagination)
 
 
 docs = FlaskApiSpec(app)
