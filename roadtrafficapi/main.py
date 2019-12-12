@@ -46,13 +46,15 @@ def generate_pagination_meta(pagination):
     }
 
 
-def generate_response(data, pagination):
+def generate_response(data, pagination, query=None):
     """
     Helper function to help ensure all responses follow the same structure.
     """
     out = {"data": data}
 
     out.update(generate_pagination_meta(pagination))
+
+    out["query"] = query
 
     return out
 
@@ -79,21 +81,53 @@ def generate_response(data, pagination):
         )
     }
 )
-def aadf_by_direction_list(page, **kwargs):
+@use_kwargs(
+    {"longitude": fields.Float(location="query", required=False, missing=None)}
+)
+@use_kwargs(
+    {"latitude": fields.Float(location="query", required=False, missing=None)}
+)
+@use_kwargs(
+    {"distance": fields.Float(location="query", required=False, missing=1000)}
+)
+def aadf_by_direction_list(page, longitude, latitude, distance, **kwargs):
     """
     List all AADF By Direction records.
     """
     per_page = 1000
 
-    pagination = AADFByDirection.query.filter_by(**kwargs).paginate(
-        page, per_page, False
-    )
+    # Some query params are simply mappings from input, some require some
+    # logic, e.g. combining long/lat into a point, so build up the query
+    # piece by piece
+    q = AADFByDirection.query
+
+    # Find AADF records by longitude and latitude, with a configurable distance
+    if longitude and latitude:
+        q = q.filter(
+            AADFByDirection.point.ST_Distance_Sphere(
+                f"SRID=4326;POINT({longitude} {latitude})"
+            )
+            <= distance
+        )
+
+    # Unpack the rest of the query params into the filter
+    q = q.filter_by(**kwargs)
+
+    # Throw the built up query into the paginator
+    pagination = q.paginate(page, per_page, False)
 
     all_aadf_by_directions = pagination.items
 
     data = list_aadf_by_direction_schema.dump(all_aadf_by_directions)
 
-    return generate_response(data, pagination)
+    query = {
+        "longitude": longitude,
+        "latitude": latitude,
+        "distance": distance,
+        **kwargs,
+    }
+
+    return generate_response(data, pagination, query)
 
 
 @app.route("/api/by-direction/year/", methods=["GET"])
