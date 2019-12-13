@@ -1,5 +1,5 @@
 import click
-from flask import Flask, request
+from flask import Flask, redirect, request
 from flask_apispec import FlaskApiSpec, doc, marshal_with, use_kwargs
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -58,6 +58,11 @@ def generate_response(data, pagination, query=None):
     out["query"] = query
 
     return out
+
+
+@app.route("/")
+def home():
+    return redirect("/api/", 302)
 
 
 @app.route("/api/by-direction/", methods=["GET"])
