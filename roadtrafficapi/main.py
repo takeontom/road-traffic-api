@@ -109,11 +109,16 @@ response to know how many pages (and total results) there are.
     description=aadf_by_direction_list_desc,
 )
 @use_kwargs({"page": fields.Int(location="query", required=False)})
+@use_kwargs({"count_point_id": fields.Int(location="query", required=False)})
 @use_kwargs({"year": fields.String(location="query", required=False)})
 @use_kwargs(
     {"local_authority_id": fields.Int(location="query", required=False)}
 )
+@use_kwargs(
+    {"local_authority_name": fields.String(location="query", required=False)}
+)
 @use_kwargs({"region_id": fields.Int(location="query", required=False)})
+@use_kwargs({"region_name": fields.String(location="query", required=False)})
 @use_kwargs({"road_name": fields.String(location="query", required=False)})
 @use_kwargs({"road_type": fields.String(location="query", required=False)})
 @use_kwargs(

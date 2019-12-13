@@ -51,17 +51,19 @@ class AADFByDirection(db.Model):
     # generate our own instead.
     id = db.Column(db.Integer, primary_key=True)
 
-    count_point_id = db.Column(db.Integer, nullable=False)
-    year = db.Column(db.String(length=4), nullable=False)
+    count_point_id = db.Column(db.Integer, nullable=False, index=True)
+    year = db.Column(db.String(length=4), nullable=False, index=True)
 
-    region_id = db.Column(db.Integer, nullable=False)
-    region_name = db.Column(db.String(length=50), nullable=False)
+    region_id = db.Column(db.Integer, nullable=False, index=True)
+    region_name = db.Column(db.String(length=50), nullable=False, index=True)
 
-    local_authority_id = db.Column(db.Integer, nullable=False)
-    local_authority_name = db.Column(db.String(length=50), nullable=False)
+    local_authority_id = db.Column(db.Integer, nullable=False, index=True)
+    local_authority_name = db.Column(
+        db.String(length=50), nullable=False, index=True
+    )
 
-    road_name = db.Column(db.String(length=50), nullable=False)
-    road_type = db.Column(db.String(length=10), nullable=False)
+    road_name = db.Column(db.String(length=50), nullable=False, index=True)
+    road_type = db.Column(db.String(length=10), nullable=False, index=True)
 
     start_junction_road_name = db.Column(db.String(length=100))
     end_junction_road_name = db.Column(db.String(length=100))
@@ -70,7 +72,7 @@ class AADFByDirection(db.Model):
     northing = db.Column(db.Integer, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
-    point = db.Column(Geometry(geometry_type="POINT", srid=4326))
+    point = db.Column(Geometry(geometry_type="POINT", srid=4326), index=True)
 
     # Numeric (i.e. Decimal) fields slightly complicate things during
     # [de]serialisation in Marshmallow. See warning in docs for more info:
@@ -78,11 +80,15 @@ class AADFByDirection(db.Model):
     link_length_km = db.Column(db.Numeric(precision=2))
     link_length_miles = db.Column(db.Numeric(precision=2))
 
-    estimation_method = db.Column(db.String(length=15), nullable=False)
-    estimation_method_detailed = db.Column(
-        db.String(length=100), nullable=False
+    estimation_method = db.Column(
+        db.String(length=15), nullable=False, index=True
     )
-    direction_of_travel = db.Column(db.String(length=1), nullable=False)
+    estimation_method_detailed = db.Column(
+        db.String(length=100), nullable=False, index=True
+    )
+    direction_of_travel = db.Column(
+        db.String(length=1), nullable=False, index=True
+    )
 
     pedal_cycles = db.Column(db.Integer, nullable=False)
     two_wheeled_motor_vehicles = db.Column(db.Integer, nullable=False)
