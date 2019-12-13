@@ -2,6 +2,7 @@ from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import Flask
 from flask_compress import Compress
+from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -43,5 +44,8 @@ def create_app():
 
     # Enable GZipped responses
     compress.init_app(app)
+
+    # Allow requests from all domains for all routes.
+    CORS(app)
 
     return app

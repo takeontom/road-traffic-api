@@ -1,0 +1,15 @@
+[Unit]
+Description=Gunicorn instance to serve Road Traffic API
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+
+WorkingDirectory=/home/ubuntu/road-traffic-api
+Environment="PATH=/home/ubuntu/road-traffic-api/.venv/bin"
+
+ExecStart=/home/ubuntu/road-traffic-api/.venv/bin/gunicorn --workers 3 --bind unix:roadtrafficapi.sock -m 007 roadtrafficapi.wsgi:app
+
+[Install]
+WantedBy=multi-user.target
